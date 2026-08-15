@@ -2,6 +2,7 @@
   "name": "sweep-monorepo",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.19.0",
   "description": "Developer-focused macOS storage analyzer and safe cleanup utility",
   "scripts": {
     "build": "tsc -b",
