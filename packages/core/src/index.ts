@@ -4,6 +4,7 @@ export * from './scanner';
 export * from './analyzer';
 export * from './developer';
 export * from './cleaner';
+export * from './duplicates';
 
 /**
  * Core engine stub for Sweep
