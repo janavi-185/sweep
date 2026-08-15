@@ -10,7 +10,7 @@ Instead of blindly deleting files, Sweep aims to **scan, analyze, explain, and s
 
 ## 🏗️ Monorepo Structure
 
-Sweep is structured as a TypeScript monorepo managed with `pnpm` workspaces:
+Sweep is structured as a lean TypeScript monorepo managed with `pnpm` workspaces:
 
 ```
 sweep/
@@ -20,10 +20,8 @@ sweep/
 │   └── desktop/                # Native Desktop GUI (@sweep/desktop)
 │
 ├── packages/
-│   ├── core/                   # Core engine & analysis (@sweep/core)
-│   ├── database/               # SQLite persistence layer (@sweep/database)
-│   ├── rules/                  # Safety rules & cleanup targets (@sweep/rules)
-│   └── types/                  # Shared TypeScript definitions (@sweep/types)
+│   ├── core/                   # Core engine, types & safety rules (@sweep/core)
+│   └── database/               # SQLite persistence layer (@sweep/database)
 │
 ├── scripts/                    # Installer & release helper scripts
 ├── tests/                      # Integration & baseline test suite

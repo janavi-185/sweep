@@ -1,4 +1,4 @@
-import { SafetyRule, FileCategory } from '@sweep/types';
+import { SafetyRule, FileCategory } from '../types';
 
 /**
  * Predefined Safety Rules for Sweep

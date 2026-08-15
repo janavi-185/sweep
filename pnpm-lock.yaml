@@ -44,44 +44,20 @@ importers:
       '@sweep/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@sweep/rules':
-        specifier: workspace:*
-        version: link:../../packages/rules
-      '@sweep/types':
-        specifier: workspace:*
-        version: link:../../packages/types
 
   apps/desktop:
     dependencies:
       '@sweep/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@sweep/types':
-        specifier: workspace:*
-        version: link:../../packages/types
 
-  packages/core:
-    dependencies:
-      '@sweep/rules':
-        specifier: workspace:*
-        version: link:../rules
-      '@sweep/types':
-        specifier: workspace:*
-        version: link:../types
+  packages/core: {}
 
   packages/database:
     dependencies:
-      '@sweep/types':
+      '@sweep/core':
         specifier: workspace:*
-        version: link:../types
-
-  packages/rules:
-    dependencies:
-      '@sweep/types':
-        specifier: workspace:*
-        version: link:../types
-
-  packages/types: {}
+        version: link:../core
 
 packages:
 

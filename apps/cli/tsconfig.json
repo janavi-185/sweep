@@ -5,11 +5,6 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "references": [
-    { "path": "../../packages/types" },
-    { "path": "../../packages/rules" },
-    { "path": "../../packages/database" },
-    { "path": "../../packages/core" }
-  ],
+  "references": [{ "path": "../../packages/core" }, { "path": "../../packages/database" }],
   "include": ["src/**/*"]
 }

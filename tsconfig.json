@@ -4,10 +4,8 @@
     "composite": true
   },
   "references": [
-    { "path": "./packages/types" },
-    { "path": "./packages/rules" },
-    { "path": "./packages/database" },
     { "path": "./packages/core" },
+    { "path": "./packages/database" },
     { "path": "./apps/cli" },
     { "path": "./apps/desktop" },
     { "path": "./tests" }

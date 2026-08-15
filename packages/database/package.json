@@ -9,6 +9,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@sweep/types": "workspace:*"
+    "@sweep/core": "workspace:*"
   }
 }

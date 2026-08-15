@@ -1,5 +1,5 @@
-export * from '@sweep/types';
-export * from '@sweep/rules';
+export * from './types';
+export * from './rules';
 
 /**
  * Core engine stub for Sweep

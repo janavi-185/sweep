@@ -7,9 +7,5 @@
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@sweep/types": "workspace:*",
-    "@sweep/rules": "workspace:*"
   }
 }

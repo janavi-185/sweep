@@ -4,6 +4,6 @@
     "composite": true,
     "rootDir": "."
   },
-  "references": [{ "path": "../packages/types" }, { "path": "../packages/core" }],
+  "references": [{ "path": "../packages/core" }],
   "include": ["**/*.ts"]
 }
