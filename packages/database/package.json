@@ -9,6 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@sweep/core": "workspace:*"
+    "@sweep/types": "workspace:*",
+    "better-sqlite3": "^9.4.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8"
   }
 }

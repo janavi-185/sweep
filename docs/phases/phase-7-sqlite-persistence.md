@@ -683,3 +683,18 @@ describe('DatabaseService', () => {
 ---
 
 ← [Phase 6 — Duplicate Finder](./phase-6-duplicate-finder.md) | [Phase 8 — Caching & Incremental Scanning](./phase-8-caching.md) →
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Scaffolded `@sweep/database` package with `better-sqlite3` engine.
+- Implemented SQLite migration runner in `packages/database/src/migrations/index.ts`.
+- Created `DatabaseService` in `packages/database/src/database.ts` with WAL mode and typed table methods (`scans`, `scan_entries`, `cleanup_events`, `settings`).
+- Integrated `DatabaseService` into `sweep scan` and `sweep clean` CLI commands for persistent history.
+- Implemented `sweep history` CLI subcommand in `apps/cli/src/commands/history.ts` supporting `--scans`, `--cleanups`, `--limit`, and `--json`.
+- Implemented `sweep config get` & `sweep config set` CLI subcommands in `apps/cli/src/commands/config.ts` targeting `~/.sweep/config.json`.
+
+**Commands User Can Execute Now**:
+- `sweep history [--scans] [--cleanups] [--limit <n>] [--json]`: Views past scan history and cleanup audit events.
+- `sweep config get <key>` / `sweep config set <key> <value>`: Reads and writes user settings in `~/.sweep/config.json`.
