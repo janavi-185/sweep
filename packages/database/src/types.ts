@@ -35,6 +35,14 @@ export interface SettingRow {
   updated_at: string;
 }
 
+export interface CacheEntryRow {
+  path: string;
+  scan_result: string;
+  cached_at: string;
+  ttl_seconds: number;
+  mtime_at_cache_time: string;
+}
+
 export type NewScan = Omit<ScanRow, 'id' | 'scanned_at'>;
 export type NewScanEntry = Omit<ScanEntryRow, 'id'>;
 export type NewCleanupEvent = Omit<CleanupEventRow, 'id' | 'cleaned_at'>;

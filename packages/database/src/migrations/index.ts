@@ -50,6 +50,18 @@ CREATE INDEX IF NOT EXISTS idx_scan_entries_category ON scan_entries(category);
 CREATE INDEX IF NOT EXISTS idx_cleanup_events_cleaned_at ON cleanup_events(cleaned_at DESC);
 `;
 
+export const CACHE_SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS cache_entries (
+  path                TEXT    PRIMARY KEY,
+  scan_result         TEXT    NOT NULL,
+  cached_at           TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+  ttl_seconds         INTEGER NOT NULL DEFAULT 3600,
+  mtime_at_cache_time TEXT    NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_cache_entries_cached_at ON cache_entries(cached_at);
+`;
+
 export function runMigrations(db: Database.Database): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -69,5 +81,13 @@ export function runMigrations(db: Database.Database): void {
       db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run(1);
     });
     applyMigration1();
+  }
+
+  if (!applied.has(2)) {
+    const applyMigration2 = db.transaction(() => {
+      db.exec(CACHE_SCHEMA_SQL);
+      db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run(2);
+    });
+    applyMigration2();
   }
 }

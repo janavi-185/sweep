@@ -525,3 +525,19 @@ describe('CacheService', () => {
 ---
 
 ← [Phase 7 — SQLite Persistence](./phase-7-sqlite-persistence.md) | [Phase 9 — Concurrency & Performance](./phase-9-concurrency.md) →
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Created `002_cache` migration adding `cache_entries` table and `idx_cache_entries_cached_at` index in `@sweep/database`.
+- Extended `DatabaseService` with `getCacheEntry`, `setCacheEntry`, `deleteCacheEntry`, `clearAllCacheEntries`, and `getCacheStats`.
+- Created `CacheService` in `packages/core/src/cache/cache-service.ts` supporting Layer 1 (In-Memory `Map`) + Layer 2 (SQLite), with automatic TTL validation and directory `mtime` comparison.
+- Added pattern-based TTL strategy in `packages/core/src/cache/ttl.ts` (15 min for Xcode/Docker, 2 hrs for node_modules/pnpm, 1 hr default).
+- Implemented `sweep cache status` and `sweep cache clear` CLI subcommands in `apps/cli/src/commands/cache.ts`.
+- Added `--no-cache` option to `sweep scan`.
+
+**Commands User Can Execute Now**:
+- `sweep cache status`: Displays cache entry count and total size on disk.
+- `sweep cache clear`: Clears memory and persistent SQLite scan cache.
+- `sweep scan [path] --no-cache`: Performs a fresh scan bypassing cached results.

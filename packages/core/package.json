@@ -6,6 +6,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
+    "@sweep/database": "workspace:*",
     "@sweep/rules": "workspace:*",
     "@sweep/types": "workspace:*"
   },

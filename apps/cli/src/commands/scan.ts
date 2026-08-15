@@ -12,11 +12,15 @@ export function registerScanCommand(program: Command): void {
     .command('scan')
     .argument('[path]', 'Directory to scan', '.')
     .option('--depth <n>', 'Maximum directory depth')
+    .option('--no-cache', 'Force fresh scan, bypassing cached directory results')
     .option('--json', 'Output raw JSON report')
     .description('Scan a directory and report storage usage')
     .action(
       createAsyncHandler(
-        async (targetPath: string, options: { depth?: string; json?: boolean }) => {
+        async (
+          targetPath: string,
+          options: { depth?: string; cache?: boolean; json?: boolean },
+        ) => {
           const parsedDepth = options.depth ? parseInt(options.depth, 10) : undefined;
           if (options.depth && (isNaN(parsedDepth!) || parsedDepth! < 0)) {
             print.error('Depth must be a positive number');

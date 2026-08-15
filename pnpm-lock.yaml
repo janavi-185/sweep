@@ -78,6 +78,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@sweep/database':
+        specifier: workspace:*
+        version: link:../database
       '@sweep/rules':
         specifier: workspace:*
         version: link:../rules

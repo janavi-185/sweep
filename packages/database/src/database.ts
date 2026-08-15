@@ -8,6 +8,7 @@ import type {
   ScanEntryRow,
   CleanupEventRow,
   SettingRow,
+  CacheEntryRow,
   NewScan,
   NewScanEntry,
   NewCleanupEvent,
@@ -136,6 +137,53 @@ export class DatabaseService {
 
   getAllSettings(): SettingRow[] {
     return this.db.prepare('SELECT * FROM settings ORDER BY key').all() as SettingRow[];
+  }
+
+  // --- Cache Entries ---
+
+  getCacheEntry(path: string): CacheEntryRow | undefined {
+    return this.db.prepare('SELECT * FROM cache_entries WHERE path = ?').get(path) as
+      CacheEntryRow | undefined;
+  }
+
+  setCacheEntry(entry: Omit<CacheEntryRow, 'cached_at'>): void {
+    this.db
+      .prepare(
+        `
+      INSERT INTO cache_entries (path, scan_result, ttl_seconds, mtime_at_cache_time)
+      VALUES (@path, @scan_result, @ttl_seconds, @mtime_at_cache_time)
+      ON CONFLICT(path) DO UPDATE SET
+        scan_result = excluded.scan_result,
+        cached_at   = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+        ttl_seconds = excluded.ttl_seconds,
+        mtime_at_cache_time = excluded.mtime_at_cache_time
+    `,
+      )
+      .run(entry);
+  }
+
+  deleteCacheEntry(path: string): void {
+    this.db.prepare('DELETE FROM cache_entries WHERE path = ?').run(path);
+  }
+
+  clearAllCacheEntries(): number {
+    const result = this.db.prepare('DELETE FROM cache_entries').run();
+    return Number(result.changes);
+  }
+
+  getCacheStats(): { entryCount: number; totalSizeBytes: number; oldestEntry: string | null } {
+    const row = this.db
+      .prepare(
+        `
+      SELECT
+        COUNT(*) as entryCount,
+        COALESCE(SUM(LENGTH(scan_result)), 0) as totalSizeBytes,
+        MIN(cached_at) as oldestEntry
+      FROM cache_entries
+    `,
+      )
+      .get() as { entryCount: number; totalSizeBytes: number; oldestEntry: string | null };
+    return row;
   }
 
   close(): void {

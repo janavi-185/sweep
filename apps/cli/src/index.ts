@@ -7,6 +7,7 @@ import { registerDupesCommand } from './commands/dupes';
 import { registerDevCommand } from './commands/dev';
 import { registerHistoryCommand } from './commands/history';
 import { registerConfigCommand } from './commands/config';
+import { registerCacheCommand } from './commands/cache';
 
 export function createProgram(): Command {
   const program = new Command();
@@ -23,6 +24,7 @@ export function createProgram(): Command {
   registerDevCommand(program);
   registerHistoryCommand(program);
   registerConfigCommand(program);
+  registerCacheCommand(program);
 
   return program;
 }
