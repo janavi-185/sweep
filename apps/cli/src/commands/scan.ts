@@ -41,7 +41,7 @@ export function registerScanCommand(program: Command): void {
             scannedResult = await scanDirectory(
               targetPath,
               { maxDepth: parsedDepth },
-              (count, currentPath) => {
+              (count: number, currentPath: string) => {
                 spinner.text = `Scanning... ${currentPath} (${count.toLocaleString()} files so far)`;
               },
             );
