@@ -3,6 +3,15 @@ import path from 'node:path';
 import os from 'node:os';
 import { DevToolDefinition, DevToolResult, MeasuredPath, DevStorageReport } from '../types';
 
+function getPhysicalSize(stat: import('node:fs').Stats): number {
+  if (typeof stat.blocks === 'number' && stat.blocks >= 0) {
+    // POSIX stat.blocks is in 512-byte units; physical size cannot exceed allocated blocks
+    const physical = stat.blocks * 512;
+    return Math.min(stat.size, physical);
+  }
+  return stat.size;
+}
+
 async function getPathSizeBytes(targetPath: string): Promise<number> {
   try {
     const stat = await fs.lstat(targetPath);
@@ -12,7 +21,7 @@ async function getPathSizeBytes(targetPath: string): Promise<number> {
     }
 
     if (!stat.isDirectory()) {
-      return stat.size;
+      return getPhysicalSize(stat);
     }
 
     let total = 0;
@@ -30,7 +39,7 @@ async function getPathSizeBytes(targetPath: string): Promise<number> {
             return await getPathSizeBytes(fullPath);
           }
           const fileStat = await fs.stat(fullPath);
-          return fileStat.size;
+          return getPhysicalSize(fileStat);
         } catch {
           return 0;
         }

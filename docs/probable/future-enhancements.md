@@ -117,7 +117,42 @@ A dual approach providing **shell tab autocompletion** and **interactive directo
 
 ---
 
-## 4. Future Ideas Backlog
+## 4. Cross-Platform Support: Windows (and Linux)
+
+### Problem
+Sweep is currently tailored to macOS paths (e.g. `~/Library/Caches`, Xcode DerivedData, Homebrew). Windows developers also suffer from massive disk bloat (Visual Studio caches, NuGet packages, WSL2 virtual disks, and Windows temporary build files).
+
+### Proposed Solution
+An OS-agnostic path resolver and modular rule registry per operating system:
+
+1. **OS-Aware Path Resolver (`packages/core/src/platform/`)**:
+   - macOS: `~/Library/Caches`, `~/Library/Application Support`
+   - Windows: `%LOCALAPPDATA%`, `%APPDATA%`, `%USERPROFILE%`, `%TEMP%`
+   - Linux: `~/.cache`, `~/.config`, `/var/log`
+
+2. **Windows Developer Tools Registry (`packages/rules/src/developer/windows/`)**:
+   - **Visual Studio**: `%LOCALAPPDATA%\Microsoft\VisualStudio\Packages`, MSBuild caches
+   - **NuGet**: `%USERPROFILE%\.nuget\packages`
+   - **Scoop / Chocolatey**: `%USERPROFILE%\scoop\cache`, `C:\ProgramData\chocolatey\cache`
+   - **WSL2 VHDX Virtual Disks**: Real vs sparse sizing of `ext4.vhdx` images
+   - **Node / Python / Flutter (Windows)**:
+     - npm: `%LOCALAPPDATA%\npm-cache`
+     - pnpm: `%LOCALAPPDATA%\pnpm\store`
+     - Yarn: `%LOCALAPPDATA%\Yarn\Cache`
+     - pip: `%LOCALAPPDATA%\pip\Cache`
+     - Flutter: `%LOCALAPPDATA%\Pub\Cache`
+     - Rust: `%USERPROFILE%\.cargo\registry`
+     - Java: `%USERPROFILE%\.m2`
+
+3. **Windows System & User Junk**:
+   - User & System Temp (`%TEMP%`, `C:\Windows\Temp`)
+   - Windows Update download cache (`C:\Windows\SoftwareDistribution\Download`)
+   - Recycle Bin (`$Recycle.Bin`)
+   - Thumbnails & icon cache (`%LOCALAPPDATA%\IconCache.db`)
+
+---
+
+## 5. Future Ideas Backlog
 
 *New items will be added here as we iterate.*
 
@@ -125,6 +160,7 @@ A dual approach providing **shell tab autocompletion** and **interactive directo
 - [ ] Theme configuration engine (`default`, `nord`, `dracula`, `emerald`, `amber`, `monochrome`)
 - [ ] Interactive directory picker (`sweep scan --interactive`) with arrow keys
 - [ ] Shell tab-completion generator (`sweep completion zsh|bash|fish`)
+- [ ] Windows cross-platform developer tool paths & system junk rules
 - [ ] Customizable scan exclude patterns via config (`sweep config add exclude "**/build/**"`)
 - [ ] Terminal sound / notification chime on completion of large scans (> 100k files)
 - [ ] Export scan results to interactive HTML report (`sweep scan ~/Downloads --html report.html`)
