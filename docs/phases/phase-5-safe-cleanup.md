@@ -438,3 +438,16 @@ Options:
 
 *Previous: [Phase 4 — Developer Storage Detection](./phase-4-developer-storage.md)*
 *Next: [Phase 6 — Duplicate File Finder](./phase-6-duplicate-finder.md)*
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Created standalone `@sweep/types` package and central type system.
+- Created SafetyRules registry in `packages/rules/src/cleanup/` (`xcode.ts`, `package-caches.ts`, `system.ts`, `logs.ts`, `user-data.ts`).
+- Built `Cleaner` module in `packages/core/src/cleaner/` (`identify.ts`, `execute.ts`, `log.ts`).
+- Implemented `sweep clean` CLI subcommand in `apps/cli/src/commands/clean.ts` supporting `--dry-run`, `--dev`, `--json`, and `@inquirer/prompts` interactive per-item confirmation (`yes` / `no` / `all` / `quit`).
+- Implemented pre-deletion path existence & safety pattern re-check and plain-text logging to `~/.sweep/logs/`.
+
+**Commands User Can Execute Now**:
+- `sweep clean [--dry-run] [--dev] [--json]`: Interactively reviews, confirms, and safely cleans identified storage candidates.

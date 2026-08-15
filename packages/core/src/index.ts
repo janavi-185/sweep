@@ -3,6 +3,7 @@ export * from './rules';
 export * from './scanner';
 export * from './analyzer';
 export * from './developer';
+export * from './cleaner';
 
 /**
  * Core engine stub for Sweep
