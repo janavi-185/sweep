@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.19.0",
   "description": "Developer-focused macOS storage analyzer and safe cleanup utility",
   "scripts": {
-    "build": "tsc -b",
+    "build": "pnpm -r run build",
     "typecheck": "pnpm -r run typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
