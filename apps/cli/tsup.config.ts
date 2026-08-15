@@ -6,7 +6,7 @@ export default defineConfig({
   target: 'node18',
   clean: true,
   bundle: true,
-  noExternal: ['@sweep/core'],
+  noExternal: ['@sweep/core', '@sweep/rules'],
   banner: {
     js: '#!/usr/bin/env node',
   },

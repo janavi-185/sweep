@@ -44,6 +44,9 @@ importers:
       '@sweep/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@sweep/rules':
+        specifier: workspace:*
+        version: link:../../packages/rules
       boxen:
         specifier: ^7.1.1
         version: 7.1.1
@@ -67,13 +70,19 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
-  packages/core: {}
+  packages/core:
+    dependencies:
+      '@sweep/rules':
+        specifier: workspace:*
+        version: link:../rules
 
   packages/database:
     dependencies:
       '@sweep/core':
         specifier: workspace:*
         version: link:../core
+
+  packages/rules: {}
 
 packages:
 

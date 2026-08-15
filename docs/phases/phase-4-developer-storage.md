@@ -539,3 +539,15 @@ All tests use a mocked filesystem via `vi.mock('fs/promises')` in Vitest.
 
 *Previous: [Phase 3 — Storage Analyzer & Reporting](./phase-3-storage-analyzer.md)*
 *Next: [Phase 5 — Safe Cleanup Engine](./phase-5-safe-cleanup.md)*
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Created 13 modular developer tool definitions in `packages/rules/src/developer/` (`xcode`, `docker`, `npm`, `pnpm`, `yarn`, `gradle`, `android`, `python`, `homebrew`, `cocoapods`, `rust`, `java`, `flutter`).
+- Implemented `detectDevStorage()` detector in `packages/core/src/developer/detector.ts` with concurrent `Promise.all` path measuring.
+- Created terminal report formatter in `packages/core/src/developer/format.ts`.
+- Implemented `sweep dev` CLI subcommand in `apps/cli/src/commands/dev.ts` with live spinner and `--json` flag.
+
+**Commands User Can Execute Now**:
+- `sweep dev [--json]`: Detects and reports developer tool storage on macOS.

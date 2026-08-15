@@ -2,6 +2,8 @@
  * Shared Type Definitions for Sweep
  */
 
+export * from '@sweep/rules';
+
 export enum FileCategory {
   Video = 'Videos',
   Audio = 'Audio',
@@ -106,6 +108,28 @@ export interface AnalysisResult {
 
 export interface AnalyzeOptions {
   topN?: number | undefined;
+}
+
+export interface MeasuredPath {
+  path: string;
+  label: string;
+  sizeBytes: number;
+  exists: boolean;
+}
+
+export interface DevToolResult {
+  tool: import('@sweep/rules').DevToolDefinition;
+  isInstalled: boolean;
+  totalSizeBytes: number;
+  measuredPaths: MeasuredPath[];
+}
+
+export interface DevStorageReport {
+  generatedAt: Date;
+  tools: DevToolResult[];
+  grandTotalBytes: number;
+  installedCount: number;
+  notInstalledCount: number;
 }
 
 export interface SafetyRule {
