@@ -1,4 +1,4 @@
-import { SafetyRule, FileCategory } from '../types';
+import { SafetyRule, FileCategory } from '../types/index.js';
 
 /**
  * Predefined Safety Rules for Sweep

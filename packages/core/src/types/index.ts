@@ -62,6 +62,13 @@ export interface ScanResult {
   entries: FsEntry[];
 }
 
+export interface ScanOptions {
+  maxDepth?: number;
+  includeHidden?: boolean;
+}
+
+export type ProgressCallback = (scannedCount: number, currentPath: string) => void;
+
 export interface SafetyRule {
   id: string;
   name: string;

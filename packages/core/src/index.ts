@@ -1,5 +1,6 @@
-export * from './types';
-export * from './rules';
+export * from './types/index.js';
+export * from './rules/index.js';
+export * from './scanner/index.js';
 
 /**
  * Core engine stub for Sweep

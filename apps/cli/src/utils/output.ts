@@ -1,6 +1,14 @@
 import chalk from 'chalk';
 import boxen from 'boxen';
 
+export function renderBarChart(percentage: number, length = 16): string {
+  const filledLength = Math.round((percentage / 100) * length);
+  const emptyLength = length - filledLength;
+  const filled = '█'.repeat(Math.max(0, filledLength));
+  const empty = '░'.repeat(Math.max(0, emptyLength));
+  return chalk.cyan(filled) + chalk.gray(empty);
+}
+
 export const print = {
   info: (msg: string): void => console.log(chalk.blue('ℹ'), msg),
   success: (msg: string): void => console.log(chalk.green('✔'), msg),
