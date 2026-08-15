@@ -1,0 +1,37 @@
+{
+  "name": "sweep-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Developer-focused macOS storage analyzer and safe cleanup utility",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "prepare": "simple-git-hooks"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.0",
+    "simple-git-hooks": "^2.9.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
+  }
+}

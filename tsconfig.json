@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/rules" },
+    { "path": "./packages/database" },
+    { "path": "./packages/core" },
+    { "path": "./apps/cli" },
+    { "path": "./apps/desktop" },
+    { "path": "./tests" }
+  ],
+  "files": []
+}

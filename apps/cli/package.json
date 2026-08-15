@@ -1,0 +1,20 @@
+{
+  "name": "@sweep/cli",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "sweep": "./dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sweep/core": "workspace:*",
+    "@sweep/types": "workspace:*",
+    "@sweep/rules": "workspace:*",
+    "@sweep/database": "workspace:*"
+  }
+}
