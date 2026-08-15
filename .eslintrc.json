@@ -19,5 +19,5 @@
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "prefer-const": "error"
   },
-  "ignorePatterns": ["dist", "node_modules", "coverage", "scripts", "docs"]
+  "ignorePatterns": ["dist", "node_modules", "coverage", "scripts", "docs", "*.config.ts"]
 }
