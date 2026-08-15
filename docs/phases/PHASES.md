@@ -1,4 +1,4 @@
-# StackSweep — Development Phases
+# Sweep — Development Phases
 
 > A complete, sequenced roadmap. Every phase builds on the last.
 > No phase is skipped. Advanced concepts appear only when the foundation is ready.
@@ -18,7 +18,7 @@
   Set up the monorepo, TypeScript, pnpm workspaces, GitHub Actions CI, and folder structure before writing a single line of application logic.
 
 - **[Phase 1 — CLI Foundation](./phase-1-cli-foundation.md)**
-  Bootstrap a working CLI binary using Commander.js with `--help`, `--version`, and placeholder command stubs. Users can run `stacksweep` from their terminal.
+  Bootstrap a working CLI binary using Commander.js with `--help`, `--version`, and placeholder command stubs. Users can run `sweep` from their terminal.
 
 - **[Phase 2 — Filesystem Scanner](./phase-2-filesystem-scanner.md)**
   Implement recursive directory traversal, file metadata collection, size calculation, and category classification. No UI yet — just accurate data.
@@ -53,8 +53,11 @@
 - **[Phase 12 — Advanced macOS Analysis](./phase-12-advanced-macos.md)**
   Deep analysis of macOS-specific storage: System Data breakdown, Time Machine snapshots, iOS device backups, hidden caches, Mail attachments, and iCloud Drive.
 
-- **[Phase 13 — Future Exploration](./phase-13-future-exploration.md)**
-  AI-powered suggestions, plugin architecture, scheduled scans, optional cloud sync, cross-platform support, Homebrew tap, and other advanced ideas that only make sense once the core product is solid.
+- **[Phase 13 — Future Exploration](../probable/phase-13-future-exploration.md)**
+  AI-powered suggestions, plugin architecture, scheduled scans, optional cloud sync, cross-platform support, Homebrew tap, and other advanced ideas.
+
+- **[Future Enhancements & Customizations](../probable/future-enhancements.md)**
+  First-time developer onboarding (username entry), pluggable CLI color themes (`nord`, `dracula`, `emerald`, `amber`, `monochrome`), and experiential backlog.
 
 ---
 
@@ -98,17 +101,10 @@ Phase 11 (Desktop App)
     │
     ▼
 Phase 13 (Future Exploration)
+    │
+    ▼
+Future Enhancements (Onboarding, Themes, Backlog)
 ```
-
----
-
-## GitHub Actions Flow (runs from Phase 0)
-
-| Trigger | Workflow | What it does |
-|---|---|---|
-| Every push / PR | `ci.yml` | Lint, typecheck, test |
-| Push to `main` | `ci.yml` | Full CI run |
-| Git tag `v*` | `release.yml` | Build binaries, create GitHub Release, update curl installer |
 
 ---
 
@@ -117,7 +113,3 @@ Phase 13 (Future Exploration)
 > **MVP = Phase 0 through Phase 5**
 >
 > A user can: install via curl → scan a directory → see a detailed report → be shown cleanup candidates with explanations → confirm or decline each one → see what was removed.
-
----
-
-*Last updated: Phase 0 not yet started.*
