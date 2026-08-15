@@ -63,8 +63,8 @@ export interface ScanResult {
 }
 
 export interface ScanOptions {
-  maxDepth?: number;
-  includeHidden?: boolean;
+  maxDepth?: number | undefined;
+  includeHidden?: boolean | undefined;
 }
 
 export type ProgressCallback = (scannedCount: number, currentPath: string) => void;

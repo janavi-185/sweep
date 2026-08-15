@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return '0 B';

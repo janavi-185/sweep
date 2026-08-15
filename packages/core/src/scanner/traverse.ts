@@ -1,14 +1,9 @@
-import fs from 'fs/promises';
-import path from 'path';
-import {
-  FileEntry,
-  DirectoryEntry,
-  FsEntry,
-  ScanOptions,
-  ProgressCallback,
-} from '../types/index.js';
-import { categoriseFile } from './categorise.js';
-import { getFileExtension, isHiddenPath } from './metadata.js';
+import fs from 'node:fs/promises';
+import type { Dirent } from 'node:fs';
+import path from 'node:path';
+import { FileEntry, DirectoryEntry, FsEntry, ScanOptions, ProgressCallback } from '../types';
+import { categoriseFile } from './categorise';
+import { getFileExtension, isHiddenPath } from './metadata';
 
 export interface TraversalResult {
   entries: FsEntry[];
@@ -50,7 +45,7 @@ export async function traverseDirectory(
 
     reportProgress(currentPath);
 
-    let dirEntries: import('fs').Dirent[];
+    let dirEntries: Dirent[];
     try {
       dirEntries = await fs.readdir(currentPath, { withFileTypes: true });
     } catch {

@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import {
   ScanResult,
   ScanOptions,
@@ -8,8 +8,8 @@ import {
   FileCategory,
   FileEntry,
   DirectoryEntry,
-} from '../types/index.js';
-import { traverseDirectory } from './traverse.js';
+} from '../types';
+import { traverseDirectory } from './traverse';
 
 export async function scanDirectory(
   targetPath: string,
@@ -93,6 +93,6 @@ export async function scanDirectory(
   };
 }
 
-export * from './traverse.js';
-export * from './metadata.js';
-export * from './categorise.js';
+export * from './traverse';
+export * from './metadata';
+export * from './categorise';

@@ -1,4 +1,4 @@
-import { FileCategory } from '../types/index.js';
+import { FileCategory } from '../types';
 
 const EXTENSION_MAP: Record<string, FileCategory> = {
   // Video
