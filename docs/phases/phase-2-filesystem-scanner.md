@@ -263,3 +263,12 @@ Use `ora` for the spinner. Update the path shown every 500ms.
 
 *Previous: [Phase 1 — CLI Foundation](./phase-1-cli-foundation.md)*
 *Next: [Phase 3 — Storage Analyzer & Reporting](./phase-3-storage-analyzer.md)*
+
+---
+
+### Completion Status Summary
+**Status**: Fully Implemented & Completed.
+- Recursive directory traversal with symlink loop prevention & non-blocking error handling (`traverse.ts`).
+- File metadata & extension categorisation (`metadata.ts`, `categorise.ts`).
+- Public `scanDirectory()` API in `@sweep/core`.
+- CLI `sweep scan [path]` command with live spinner, formatted terminal report with ASCII bar charts, `--depth <n>`, and `--json` options.

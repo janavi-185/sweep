@@ -1,182 +1,184 @@
 # Phase 1 — CLI Foundation
 
-> **Goal:** A working CLI binary that users can run. No real functionality yet — just the shell of a great tool.
-> After this phase, `stacksweep --help` and `stacksweep --version` work correctly, and all commands are stubbed.
+> **Goal:** Bootstrap a working CLI executable with Commander.js.
+> Users can run `stacksweep` in their terminal and see help, version info, and placeholder command outputs.
 
 ---
 
 ## Objectives
 
-- Bootstrap `apps/cli` as a working Node.js CLI application
-- Integrate Commander.js for argument and command parsing
-- Define all planned commands as stubs (they print "coming soon" for now)
-- Set up the CLI build pipeline to produce a runnable script
-- Wire the CLI into the root dev/build scripts
+- Setup `apps/cli` package structure using Commander.js
+- Implement `-v, --version` and `-h, --help` flags
+- Register all planned subcommands with stubbed actions
+- Set up `tsup` build configuration to bundle CLI binary
+- Implement terminal formatting helpers in `utils/output.ts`
+- Make binary executable via shebang (`#!/usr/bin/env node`)
 
 ---
 
-## Tech
-
-| Tool | Purpose |
-|---|---|
-| `commander` | Argument parsing, subcommands, help text |
-| `chalk` | Coloured terminal output |
-| `ora` | Spinner for async operations |
-| `boxen` | Styled terminal boxes for reports |
-| `tsup` | Fast TypeScript bundler for the CLI output |
-
----
-
-## CLI Commands (all stubbed in this phase)
+## Architecture Overview
 
 ```
-stacksweep [options] [command]
-
-Options:
-  -v, --version       Output the version number
-  -h, --help          Display help
-
-Commands:
-  scan [path]         Scan a directory and report storage usage
-  analyze             Analyze the last scan result
-  clean               Show cleanup candidates and ask for confirmation
-  dupes [path]        Find duplicate files in a directory
-  dev                 Show developer-specific storage usage
-  history             Show past scan and cleanup history
-  config              View or edit StackSweep settings
-  help [command]      Display help for a command
-```
-
-### Stub output example
-```
-$ stacksweep scan ~/Downloads
-
-  StackSweep — scan
-  This feature is coming in Phase 2.
+apps/cli/src/
+├── index.ts               # Program entry point (Commander setup)
+├── commands/
+│   ├── scan.ts            # stacksweep scan [path]
+│   ├── analyze.ts         # stacksweep analyze
+│   ├── clean.ts           # stacksweep clean
+│   ├── dupes.ts           # stacksweep dupes [path]
+│   ├── dev.ts             # stacksweep dev
+│   ├── history.ts         # stacksweep history
+│   └── config.ts          # stacksweep config
+└── utils/
+    ├── output.ts          # Chalk/boxen formatting helpers
+    └── version.ts         # Dynamic version reader from package.json
 ```
 
 ---
 
-## Entry Point
+## Subcommand Definitions
 
-```
-apps/cli/
-├── src/
-│   ├── index.ts          # Entry point — sets up Commander program
-│   ├── commands/
-│   │   ├── scan.ts       # scan command stub
-│   │   ├── analyze.ts    # analyze command stub
-│   │   ├── clean.ts      # clean command stub
-│   │   ├── dupes.ts      # dupes command stub
-│   │   ├── dev.ts        # dev command stub
-│   │   ├── history.ts    # history command stub
-│   │   └── config.ts     # config command stub
-│   └── utils/
-│       ├── output.ts     # Shared print helpers (success, error, info, warn)
-│       └── version.ts    # Reads version from package.json
-├── package.json
-├── tsconfig.json
-└── tsup.config.ts
-```
+Every command is defined in its own file in `commands/`. Each exports a registration function that registers the command with Commander.
 
----
+```typescript
+// apps/cli/src/commands/scan.ts (Phase 1 stub)
+import { Command } from 'commander'
 
-## Build Pipeline
-
-`tsup` is used to bundle `apps/cli/src/index.ts` into `apps/cli/dist/index.js`.
-
-The `package.json` for `apps/cli` includes:
-
-```json
-{
-  "bin": {
-    "stacksweep": "./dist/index.js"
-  },
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs --target node18",
-    "dev": "tsup src/index.ts --format cjs --target node18 --watch"
-  }
+export function registerScanCommand(program: Command) {
+  program
+    .command('scan')
+    .argument('[path]', 'Directory to scan', '.')
+    .option('--depth <n>', 'Maximum directory depth')
+    .option('--json', 'Output raw JSON report')
+    .description('Scan a directory and report storage usage')
+    .action(async (path, options) => {
+      // Phase 1 stub — prints placeholder output
+      console.log(`Scan command called for: ${path}`)
+      console.log('Feature arriving in Phase 2.')
+    })
 }
 ```
 
-The output file must start with `#!/usr/bin/env node` shebang so it is executable.
+---
+
+## CLI Entrypoint (`apps/cli/src/index.ts`)
+
+```typescript
+#!/usr/bin/env node
+import { Command } from 'commander'
+import { getVersion } from './utils/version'
+import { registerScanCommand } from './commands/scan'
+import { registerAnalyzeCommand } from './commands/analyze'
+import { registerCleanCommand } from './commands/clean'
+import { registerDupesCommand } from './commands/dupes'
+import { registerDevCommand } from './commands/dev'
+import { registerHistoryCommand } from './commands/history'
+import { registerConfigCommand } from './commands/config'
+
+const program = new Command()
+
+program
+  .name('stacksweep')
+  .description('Developer-focused macOS storage analyzer & cleanup tool')
+  .version(getVersion(), '-v, --version')
+
+registerScanCommand(program)
+registerAnalyzeCommand(program)
+registerCleanCommand(program)
+registerDupesCommand(program)
+registerDevCommand(program)
+registerHistoryCommand(program)
+registerConfigCommand(program)
+
+program.parse(process.argv)
+```
 
 ---
 
-## Output Conventions
+## Terminal Output Formatting (`utils/output.ts`)
 
-Establish output helpers in `utils/output.ts` now — every command will use them.
+Use `chalk` for color and `boxen` for styled boxes.
 
 ```typescript
-// utils/output.ts
+import chalk from 'chalk'
+import boxen from 'boxen'
+
 export const print = {
-  info: (msg: string) => console.log(chalk.blue('ℹ'), msg),
-  success: (msg: string) => console.log(chalk.green('✔'), msg),
-  warn: (msg: string) => console.log(chalk.yellow('⚠'), msg),
-  error: (msg: string) => console.error(chalk.red('✖'), msg),
-  header: (title: string) => console.log(chalk.bold.white(`\n  ${title}\n`)),
-  divider: () => console.log(chalk.gray('─'.repeat(50))),
+  header: (title: string) => console.log(chalk.bold.cyan(`\n  StackSweep — ${title}\n`)),
+  info:    (msg: string)   => console.log(chalk.blue('ℹ'), msg),
+  success: (msg: string)   => console.log(chalk.green('✔'), msg),
+  warning: (msg: string)   => console.log(chalk.yellow('⚠'), msg),
+  error:   (msg: string)   => console.log(chalk.red('✖'), msg),
+  divider: ()              => console.log(chalk.gray('─'.repeat(50))),
+  box:     (text: string)  => console.log(boxen(text, { padding: 1, borderStyle: 'round' })),
 }
 ```
 
-All future commands use these — never raw `console.log` with inline styling.
-
 ---
 
-## Version Management
+## Build Configuration (`apps/cli/tsup.config.ts`)
 
-- Version is stored **only** in `apps/cli/package.json`
-- `--version` reads it at runtime — never hardcoded
-- Version format: `0.1.0` (semver)
-
----
-
-## Error Handling Convention (establish now)
+Use `tsup` (powered by esbuild) to bundle `apps/cli` into a single, executable JavaScript file.
 
 ```typescript
-// All async command handlers follow this pattern:
-async function run() {
-  try {
-    // command logic
-  } catch (err) {
-    print.error(err instanceof Error ? err.message : String(err))
-    process.exit(1)
+import { defineConfig } from 'tsup'
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['cjs'],
+  target: 'node18',
+  clean: true,
+  bundle: true,
+  banner: {
+    js: '#!/usr/bin/env node',
+  },
+})
+```
+
+Running `pnpm --filter @sweep/cli build` produces `apps/cli/dist/index.js`.
+
+---
+
+## Command Registry
+
+| Command | Status | Description |
+|---|---|---|
+| `stacksweep scan [path]` | Stubbed | Scan a directory and report storage usage |
+| `stacksweep analyze` | Stubbed | Deep breakdown of last scan result |
+| `stacksweep clean` | Stubbed | Interactive safe cleanup |
+| `stacksweep dupes [path]` | Stubbed | Find duplicate files |
+| `stacksweep dev` | Stubbed | Developer storage detection |
+| `stacksweep history` | Stubbed | Scan and cleanup history |
+| `stacksweep config` | Stubbed | View or edit configuration settings |
+
+---
+
+## Error Handling Pattern
+
+Every command action handler is wrapped to catch unexpected runtime errors gracefully:
+
+```typescript
+function createAsyncHandler(fn: Function) {
+  return async (...args: any[]) => {
+    try {
+      await fn(...args)
+    } catch (err) {
+      print.error((err as Error).message)
+      process.exit(1)
+    }
   }
 }
 ```
 
-No unhandled promise rejections. Ever.
-
 ---
 
-## Dev Workflow
+## CI & Testing Strategy
 
-```bash
-# From root
-pnpm dev          # Watch mode — rebuilds CLI on file change
+- `apps/cli` is built and linted in CI alongside `packages/*`
+- Test: execute `stacksweep --help` and assert exit code is 0
+- Test: execute `stacksweep --version` and assert output matches `package.json`
 
-# Run the CLI directly during development
-node apps/cli/dist/index.js scan ~/Downloads
-
-# Or link it globally for easier testing
-pnpm link --global
-stacksweep --help
-```
-
----
-
-## Testing
-
-- Unit test the `output.ts` utilities
-- Integration test: spawn CLI process and assert stdout output
-- Test that `--help` outputs all expected commands
-- Test that `--version` outputs a valid semver string
-
----
-
-## CI Integration
-
-Phase 0's CI workflow already covers:
+### CI additions in Phase 1
 - TypeScript compilation of `apps/cli`
 - ESLint on all CLI source files
 - Running tests
@@ -203,3 +205,13 @@ No changes to CI needed in this phase.
 
 *Previous: [Phase 0 — Architecture](./phase-0-architecture.md)*
 *Next: [Phase 2 — Filesystem Scanner](./phase-2-filesystem-scanner.md)*
+
+---
+
+### Completion Status Summary
+**Status**: Fully Implemented & Completed.
+- Modular CLI application in `apps/cli` built with Commander.js.
+- Clean subcommand structure (`scan`, `analyze`, `clean`, `dupes`, `dev`, `history`, `config`).
+- Output formatting helpers with `chalk` and `boxen` (`utils/output.ts`).
+- `tsup` build configuration producing standalone `dist/index.js` executable.
+- Globally runnable executable (`sweep --help`, `sweep --version`).
