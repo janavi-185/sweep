@@ -65,14 +65,22 @@ export function formatAnalysisReport(analysis: AnalysisResult, topN = 10): strin
   } else {
     const totalCandidateBytes = candidates.reduce((acc, c) => acc + c.sizeBytes, 0);
     lines.push(
-      `  ⚠  ${candidates.length} item${candidates.length > 1 ? 's' : ''} identified — ${formatBytes(totalCandidateBytes)} could be freed\n`,
+      `  ⚠  ${candidates.length.toLocaleString()} item${candidates.length > 1 ? 's' : ''} identified — ${formatBytes(totalCandidateBytes)} could be freed\n`,
     );
 
-    for (const c of candidates) {
+    const displayedCandidates = candidates.slice(0, topN);
+    for (const c of displayedCandidates) {
       const tag = `[${c.reason}]`.padEnd(17);
       const sizePad = formatBytes(c.sizeBytes).padStart(10);
       lines.push(`  ${tag} ${c.path.padEnd(35)} ${sizePad}`);
       lines.push(`                    ${c.explanation}\n`);
+    }
+
+    if (candidates.length > topN) {
+      const remainingCount = candidates.length - topN;
+      lines.push(
+        `  ... and ${remainingCount.toLocaleString()} more candidates (run sweep analyze --json for complete list)\n`,
+      );
     }
   }
 

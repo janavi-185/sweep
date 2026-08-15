@@ -96,17 +96,27 @@ export function registerAnalyzeCommand(program: Command): void {
           const totalCandidateBytes = candidates.reduce((acc, c) => acc + c.sizeBytes, 0);
           console.log(
             chalk.yellow(
-              `  ⚠  ${candidates.length} item${candidates.length > 1 ? 's' : ''} identified — ${formatBytes(totalCandidateBytes)} could be freed\n`,
+              `  ⚠  ${candidates.length.toLocaleString()} item${candidates.length > 1 ? 's' : ''} identified — ${formatBytes(totalCandidateBytes)} could be freed\n`,
             ),
           );
 
-          for (const c of candidates) {
+          const displayedCandidates = candidates.slice(0, topN);
+          for (const c of displayedCandidates) {
             const tag = `[${c.reason}]`.padEnd(17);
             const sizePad = formatBytes(c.sizeBytes).padStart(10);
             console.log(
               `  ${chalk.cyan(tag)} ${chalk.white(c.path.padEnd(35))} ${chalk.bold.yellow(sizePad)}`,
             );
             console.log(`                    ${chalk.gray(c.explanation)}\n`);
+          }
+
+          if (candidates.length > topN) {
+            const remainingCount = candidates.length - topN;
+            console.log(
+              chalk.gray(
+                `  ... and ${remainingCount.toLocaleString()} more candidates (run sweep analyze --json for complete list)\n`,
+              ),
+            );
           }
         }
 
