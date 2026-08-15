@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
 import path from 'path';
-import { scanDirectory, formatBytes } from '@sweep/core';
+import { scanDirectory, formatBytes, analyzeResult } from '@sweep/core';
 import { print, renderBarChart } from '../utils/output';
 import { createAsyncHandler } from '../utils/async-handler';
 
@@ -27,7 +27,8 @@ export function registerScanCommand(program: Command): void {
           // If JSON output requested, do not print spinner or terminal headers
           if (options.json) {
             const result = await scanDirectory(targetPath, { maxDepth: parsedDepth });
-            console.log(JSON.stringify(result, null, 2));
+            const analysis = analyzeResult(result);
+            console.log(JSON.stringify({ scan: result, analysis }, null, 2));
             return;
           }
 
@@ -50,6 +51,9 @@ export function registerScanCommand(program: Command): void {
             spinner.fail(`Scan failed: ${err instanceof Error ? err.message : String(err)}`);
             process.exit(1);
           }
+
+          // Run analyzer automatically
+          const analysis = analyzeResult(scannedResult);
 
           // Formatted Terminal Report
           console.log(chalk.bold.cyan('\n  Sweep Scan'));
@@ -102,6 +106,28 @@ export function registerScanCommand(program: Command): void {
             }
           }
 
+          // Analysis Candidates Summary Chained
+          if (analysis.candidates.length > 0) {
+            const totalCandidateBytes = analysis.candidates.reduce(
+              (acc, c) => acc + c.sizeBytes,
+              0,
+            );
+            console.log(chalk.bold.cyan('\n  Analysis Highlights'));
+            print.divider();
+            console.log(
+              chalk.yellow(
+                `  Found ${analysis.candidates.length} cleanup candidate${analysis.candidates.length > 1 ? 's' : ''} (${formatBytes(totalCandidateBytes)} total)\n`,
+              ),
+            );
+
+            for (const c of analysis.candidates.slice(0, 4)) {
+              const sizePad = formatBytes(c.sizeBytes).padStart(10);
+              console.log(
+                `    ${chalk.white(c.path.padEnd(35))} ${chalk.bold.yellow(sizePad)}   ${chalk.gray(c.reason)}`,
+              );
+            }
+          }
+
           print.divider();
           if (scannedResult.skippedCount > 0) {
             console.log(
@@ -113,7 +139,12 @@ export function registerScanCommand(program: Command): void {
           console.log(
             chalk.gray('  Run ') +
               chalk.cyan('sweep analyze') +
-              chalk.gray(' for a deeper breakdown.\n'),
+              chalk.gray(' for the full breakdown.'),
+          );
+          console.log(
+            chalk.gray('  Run ') +
+              chalk.cyan('sweep clean') +
+              chalk.gray(' to review and remove candidates.\n'),
           );
         },
       ),

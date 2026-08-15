@@ -91,12 +91,40 @@ A pluggable CLI theme system with curated color palettes that adjust bar charts,
 
 ---
 
-## 3. Future Ideas Backlog
+## 3. Directory Navigation, Tab Completion & Path Suggestions
+
+### Problem
+Users who don't remember exact macOS paths or folder structures may get stuck typing full directory strings manually.
+
+### Proposed Solution
+A dual approach providing **shell tab autocompletion** and **interactive directory suggestions**:
+
+1. **Interactive Path Picker (`sweep scan --interactive` or `sweep scan` with no path)**:
+   - Present a selectable list of common target folders using arrow keys:
+     ```text
+     ? Select target directory to scan:
+     ❯ 📁 Downloads (~/Downloads)
+       📁 Documents (~/Documents)
+       📁 Xcode Caches & DerivedData (~/Library/Developer/Xcode)
+       📁 macOS App Caches (~/Library/Caches)
+       📁 User Home Directory (~)
+       📁 Custom path entry...
+     ```
+2. **Shell Tab Completion (`sweep completion`)**:
+   - Provide a command to install native tab completion scripts for `zsh`, `bash`, and `fish`:
+     `sweep completion zsh >> ~/.zshrc`
+   - When typing `sweep scan ~/D<Tab>`, the shell automatically completes to `~/Downloads`, `~/Documents`, `~/Desktop`, etc.
+
+---
+
+## 4. Future Ideas Backlog
 
 *New items will be added here as we iterate.*
 
 - [ ] First-time interactive username prompt on empty config
 - [ ] Theme configuration engine (`default`, `nord`, `dracula`, `emerald`, `amber`, `monochrome`)
+- [ ] Interactive directory picker (`sweep scan --interactive`) with arrow keys
+- [ ] Shell tab-completion generator (`sweep completion zsh|bash|fish`)
 - [ ] Customizable scan exclude patterns via config (`sweep config add exclude "**/build/**"`)
 - [ ] Terminal sound / notification chime on completion of large scans (> 100k files)
 - [ ] Export scan results to interactive HTML report (`sweep scan ~/Downloads --html report.html`)

@@ -291,3 +291,17 @@ For Phase 3: if `analyze` is run without a prior `scan` in the session, print an
 
 *Previous: [Phase 2 — Filesystem Scanner](./phase-2-filesystem-scanner.md)*
 *Next: [Phase 4 — Developer Storage Detection](./phase-4-developer-storage.md)*
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Implemented `packages/core/src/analyzer/` (`breakdown.ts`, `rules.ts`, `candidates.ts`, `format.ts`, `index.ts`).
+- Integrated 5 heuristic candidate rules (`trashRule`, `staleDownloadsRule`, `largeCacheRule`, `oldLogsRule`, `tempFilesRule`).
+- Formatted 32-column ASCII bar charts (`render32ColBarChart`).
+- Auto-chained `analyzeResult()` inside `sweep scan` to display analysis highlights.
+- Implemented `sweep analyze` standalone command with `--top <n>` and `--json` options.
+
+**Commands User Can Execute Now**:
+- `sweep scan [path]`: Scans directory and appends automatic analysis highlights.
+- `sweep analyze [--top <n>] [--json]`: Performs deep analysis on the last scan result.

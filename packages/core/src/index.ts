@@ -1,6 +1,7 @@
 export * from './types';
 export * from './rules';
 export * from './scanner';
+export * from './analyzer';
 
 /**
  * Core engine stub for Sweep

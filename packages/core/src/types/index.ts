@@ -69,6 +69,45 @@ export interface ScanOptions {
 
 export type ProgressCallback = (scannedCount: number, currentPath: string) => void;
 
+export interface CategoryBreakdown {
+  category: FileCategory;
+  sizeBytes: number;
+  fileCount: number;
+  percentage: number;
+}
+
+export interface StorageBreakdown {
+  totalBytes: number;
+  byCategory: CategoryBreakdown[];
+}
+
+export type CandidateReason =
+  'trash' | 'stale_downloads' | 'large_cache' | 'old_logs' | 'temp_files' | 'duplicate';
+
+export type CandidateCategory = 'system' | 'user_data' | 'cache' | 'logs' | 'developer';
+
+export interface AnalyzerCleanupCandidate {
+  path: string;
+  sizeBytes: number;
+  reason: CandidateReason;
+  explanation: string;
+  category: CandidateCategory;
+  isSafeToClean: boolean;
+}
+
+export interface AnalysisResult {
+  scanResult: ScanResult;
+  analyzedAt: Date;
+  breakdown: StorageBreakdown;
+  topFiles: FileEntry[];
+  topDirectories: DirectoryEntry[];
+  candidates: AnalyzerCleanupCandidate[];
+}
+
+export interface AnalyzeOptions {
+  topN?: number | undefined;
+}
+
 export interface SafetyRule {
   id: string;
   name: string;
