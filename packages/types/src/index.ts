@@ -199,3 +199,28 @@ export interface CleanupSessionResult {
   totalFreedBytes: number;
   itemResults: CleanupItemResult[];
 }
+
+// --- Duplicate Finder Types (Phase 6) ---
+
+export interface DuplicateGroup {
+  hash: string;
+  sizeBytes: number;
+  wastedBytes: number;
+  files: FileEntry[];
+}
+
+export interface DuplicateReport {
+  scannedPath: string;
+  generatedAt: Date;
+  durationMs: number;
+  filesScanned: number;
+  filesHashed: number;
+  duplicateGroupCount: number;
+  totalWastedBytes: number;
+  groups: DuplicateGroup[];
+}
+
+export interface FindDuplicatesOptions {
+  minSizeBytes?: number | undefined;
+  onProgress?: ((hashed: number, total: number, currentPath: string) => void) | undefined;
+}

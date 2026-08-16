@@ -329,3 +329,16 @@ All tests use fixture-based mock filesystems — a fixed set of `FileEntry` obje
 
 *Previous: [Phase 5 — Safe Cleanup Engine](./phase-5-safe-cleanup.md)*
 *Next: Phase 7 — Persistence & History (coming soon)*
+
+---
+
+### Completion Status Summary & Executable Commands
+**Status**: Fully Implemented & Completed.
+- Added Duplicate Finder types (`DuplicateGroup`, `DuplicateReport`, `FindDuplicatesOptions`) to `@sweep/types`.
+- Implemented Pass 1 (`groupBySize()`) in `packages/core/src/duplicates/group-by-size.ts` with min-size & zero-byte filtering.
+- Implemented Pass 2 (`hashFiles()`) in `packages/core/src/duplicates/hash-files.ts` with streaming SHA-256 hashing, `onProgress` callback, ENOENT/EACCES error resilience, and `// TODO(phase-9): parallelise` annotation.
+- Built report assembler (`buildReport()`) and terminal formatter (`formatDuplicateReport()`).
+- Implemented `sweep dupes [path]` CLI subcommand in `apps/cli/src/commands/dupes.ts` with live progress indicator, `--min-size` option, and `--json` flag.
+
+**Commands User Can Execute Now**:
+- `sweep dupes [path] [--min-size <bytes>] [--json]`: Finds duplicate files using two-pass size-grouping + content-hashing.
