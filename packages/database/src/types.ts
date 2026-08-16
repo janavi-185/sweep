@@ -1,3 +1,15 @@
+export interface DatabaseSyncInterface {
+  close(): void;
+  exec(sql: string): void;
+  prepare(sql: string): StatementSyncInterface;
+}
+
+export interface StatementSyncInterface {
+  all(...params: unknown[]): unknown[];
+  get(...params: unknown[]): unknown;
+  run(...params: unknown[]): { changes: number; lastInsertRowid: number | bigint };
+}
+
 export interface ScanRow {
   id: number;
   root_path: string;

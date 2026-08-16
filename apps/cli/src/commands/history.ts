@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { DatabaseService } from '@sweep/database';
+import { DatabaseService, ScanRow, CleanupEventRow } from '@sweep/database';
 import { formatBytes } from '@sweep/core';
 import { print } from '../utils/output';
 import { createAsyncHandler } from '../utils/async-handler';
@@ -27,8 +27,8 @@ export function registerHistoryCommand(program: Command): void {
           const showScans = options.scans || (!options.scans && !options.cleanups);
           const showCleanups = options.cleanups || (!options.scans && !options.cleanups);
 
-          const scans = showScans ? db.getRecentScans(limit) : [];
-          const cleanups = showCleanups ? db.getRecentCleanupEvents(limit) : [];
+          const scans: ScanRow[] = showScans ? db.getRecentScans(limit) : [];
+          const cleanups: CleanupEventRow[] = showCleanups ? db.getRecentCleanupEvents(limit) : [];
           const totalCleaned = db.getTotalByteCleaned();
 
           db.close();
@@ -49,7 +49,7 @@ export function registerHistoryCommand(program: Command): void {
             if (scans.length === 0) {
               console.log('  No past scans recorded yet.\n');
             } else {
-              scans.forEach((s) => {
+              scans.forEach((s: ScanRow) => {
                 const date = new Date(s.scanned_at).toISOString().replace('T', ' ').slice(0, 16);
                 console.log(
                   `  #${s.id.toString().padEnd(4)} ${s.root_path.padEnd(25)} ${date}  ${(s.duration_ms / 1000).toFixed(1)}s  ${s.file_count} files  ${formatBytes(s.total_size_bytes)}`,
@@ -65,7 +65,7 @@ export function registerHistoryCommand(program: Command): void {
             if (cleanups.length === 0) {
               console.log('  No past cleanup events recorded yet.\n');
             } else {
-              cleanups.forEach((c) => {
+              cleanups.forEach((c: CleanupEventRow) => {
                 const date = new Date(c.cleaned_at).toISOString().replace('T', ' ').slice(0, 16);
                 console.log(
                   `  ${date}  [${c.rule_id.padEnd(18)}]  ${c.path.padEnd(35)}  ${formatBytes(c.size_bytes)}`,

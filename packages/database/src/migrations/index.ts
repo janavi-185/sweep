@@ -1,4 +1,4 @@
-import type { DatabaseSync } from 'node:sqlite';
+import type { DatabaseSyncInterface } from '../types.js';
 
 export const INITIAL_SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS scans (
@@ -50,7 +50,7 @@ CREATE INDEX IF NOT EXISTS idx_scan_entries_category ON scan_entries(category);
 CREATE INDEX IF NOT EXISTS idx_cleanup_events_cleaned_at ON cleanup_events(cleaned_at DESC);
 `;
 
-export function runMigrations(db: DatabaseSync): void {
+export function runMigrations(db: DatabaseSyncInterface): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS schema_migrations (
       version    INTEGER PRIMARY KEY,

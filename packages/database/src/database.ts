@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import type { DatabaseSync as DatabaseSyncType } from 'node:sqlite';
 import { runMigrations } from './migrations/index.js';
 import type {
+  DatabaseSyncInterface,
   ScanRow,
   ScanEntryRow,
   CleanupEventRow,
@@ -16,14 +16,14 @@ import type {
 function loadDatabaseSync(): new (
   location: string,
   options?: { open?: boolean },
-) => DatabaseSyncType {
+) => DatabaseSyncInterface {
   const req = eval('require');
   const sqlite = req('node:sqlite');
   return sqlite.DatabaseSync;
 }
 
 export class DatabaseService {
-  private db: DatabaseSyncType;
+  private db: DatabaseSyncInterface;
 
   constructor(customPath?: string) {
     const dbPath = customPath || DatabaseService.getDefaultDbPath();
