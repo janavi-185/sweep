@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { select } from '@inquirer/prompts';
+import { DatabaseService } from '@sweep/database';
 import {
   getLastScanResult,
   analyzeResult,
@@ -248,6 +249,26 @@ export function registerCleanCommand(program: Command): void {
             totalFreedBytes,
             itemResults,
           };
+
+          // Record cleanup events in SQLite Database
+          try {
+            const db = new DatabaseService();
+            const nowIso = completedAt.toISOString();
+            const events = itemResults
+              .filter((r) => r.actionTaken === 'cleaned')
+              .map((r) => ({
+                path: r.candidate.path,
+                size_bytes: r.freedBytes,
+                rule_id: r.candidate.rule.id,
+                confirmed_at: nowIso,
+              }));
+            if (events.length > 0) {
+              db.insertCleanupEvents(events);
+            }
+            db.close();
+          } catch {
+            // Non-blocking database recording
+          }
 
           if (options.json) {
             console.log(JSON.stringify(sessionResult, null, 2));

@@ -3,6 +3,7 @@ import ora from 'ora';
 import chalk from 'chalk';
 import path from 'path';
 import { scanDirectory, formatBytes, analyzeResult } from '@sweep/core';
+import { DatabaseService } from '@sweep/database';
 import { print, renderBarChart } from '../utils/output';
 import { createAsyncHandler } from '../utils/async-handler';
 
@@ -50,6 +51,22 @@ export function registerScanCommand(program: Command): void {
           } catch (err) {
             spinner.fail(`Scan failed: ${err instanceof Error ? err.message : String(err)}`);
             process.exit(1);
+          }
+
+          // Save scan metadata to SQLite Database
+          try {
+            const db = new DatabaseService();
+            db.insertScan({
+              root_path: scannedResult.rootPath,
+              duration_ms: scannedResult.durationMs,
+              total_size_bytes: scannedResult.totalSizeBytes,
+              file_count: scannedResult.fileCount,
+              directory_count: scannedResult.directoryCount,
+              skipped_count: scannedResult.skippedCount,
+            });
+            db.close();
+          } catch {
+            // Non-blocking database recording
           }
 
           // Run analyzer automatically
