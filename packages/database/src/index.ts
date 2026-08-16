@@ -1,3 +1,3 @@
-export * from './types';
-export * from './database';
-export * from './migrations/index';
+export * from './types.js';
+export * from './database.js';
+export * from './migrations/index.js';

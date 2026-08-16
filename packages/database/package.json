@@ -5,14 +5,10 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@sweep/types": "workspace:*",
-    "better-sqlite3": "^9.4.3"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.8"
+    "@sweep/types": "workspace:*"
   }
 }
