@@ -1,4 +1,4 @@
-import type Database from 'better-sqlite3';
+import type { DatabaseSync } from 'node:sqlite';
 
 export const INITIAL_SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS scans (
@@ -50,7 +50,7 @@ CREATE INDEX IF NOT EXISTS idx_scan_entries_category ON scan_entries(category);
 CREATE INDEX IF NOT EXISTS idx_cleanup_events_cleaned_at ON cleanup_events(cleaned_at DESC);
 `;
 
-export function runMigrations(db: Database.Database): void {
+export function runMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS schema_migrations (
       version    INTEGER PRIMARY KEY,
@@ -58,16 +58,13 @@ export function runMigrations(db: Database.Database): void {
     )
   `);
 
-  const appliedRows = db.prepare('SELECT version FROM schema_migrations').all() as {
+  const appliedRows = db.prepare('SELECT version FROM schema_migrations').all() as unknown as {
     version: number;
   }[];
   const applied = new Set<number>(appliedRows.map((r) => r.version));
 
   if (!applied.has(1)) {
-    const applyMigration1 = db.transaction(() => {
-      db.exec(INITIAL_SCHEMA_SQL);
-      db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run(1);
-    });
-    applyMigration1();
+    db.exec(INITIAL_SCHEMA_SQL);
+    db.prepare('INSERT INTO schema_migrations (version) VALUES (?)').run(1);
   }
 }
