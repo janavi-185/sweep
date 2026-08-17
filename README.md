@@ -1,70 +1,9 @@
 # Sweep 🧹
 
-> **Understand your Mac. Find what's wasting your storage. Clean it safely.**
+Sweep is a developer-focused macOS storage analyzer and safe cleanup CLI tool built with TypeScript.
 
-Sweep is a developer-focused macOS storage analyzer and cleanup CLI & desktop app built with TypeScript.
-
-Instead of blindly deleting files, Sweep aims to **scan, analyze, explain, and safely clean** unnecessary data from your Mac.
-
----
-
-## 🏗️ Monorepo Structure
-
-Sweep is structured as a lean TypeScript monorepo managed with `pnpm` workspaces:
-
-```
-sweep/
-│
-├── apps/
-│   ├── cli/                    # CLI binary (@sweep/cli)
-│   └── desktop/                # Native Desktop GUI (@sweep/desktop)
-│
-├── packages/
-│   ├── core/                   # Core engine, types & safety rules (@sweep/core)
-│   └── database/               # SQLite persistence layer (@sweep/database)
-│
-├── scripts/                    # Installer & release helper scripts
-├── tests/                      # Integration & baseline test suite
-└── docs/                       # Project architecture & phase documentation
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js**: v18+ or v20+
-- **pnpm**: v8+
-
-### Setup
-
-Clone the repository and install dependencies:
-
-```bash
-git clone <repository-url>
-cd sweep
-pnpm install
-```
-
-### Development Commands
-
-- **Build packages**: `pnpm build`
-- **Typecheck**: `pnpm typecheck`
-- **Lint**: `pnpm lint`
-- **Format**: `pnpm format`
-- **Test**: `pnpm test`
-
----
-
-## 🔐 Safety Philosophy
-
-> **Never delete something just because it is large.**
-
-Sweep requires explicit confirmation before performing any cleanup actions. Every candidate is explained with clear reasoning and safety checks.
-
----
-
-## 📄 License
-
-MIT
+* **macOS Storage Analyzer & Cleanup Tool**: Helps you scan your Mac to inspect disk usage, break down storage by category, and identify large files.
+* **Identifies Hidden Developer Bloat**: Automatically detects heavy tool caches and build artifacts (Xcode DerivedData, Docker containers, npm, pnpm, Yarn, Gradle, Cargo, and pip caches) that silently consume gigabytes of space.
+* **Permission-First Safety Model**: Never deletes files automatically — explains what every item is, why it is safe to remove, and requires explicit user confirmation before any deletion.
+* **Byte-for-Byte Duplicate Finder**: Uses a two-pass size-filtering and SHA-256 content hashing engine to pinpoint exact duplicate files wasting disk space.
+* **Persistence & Fast Incremental Scanning**: Saves scan history, maintains a cleanup audit log in a local SQLite database (`~/.sweep/sweep.db`), and caches scan results for fast repeated runs.

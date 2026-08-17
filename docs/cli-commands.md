@@ -16,8 +16,9 @@
 | [`sweep history`](#6-sweep-history) | View past scans and cleanup audit log from SQLite | Phase 7 |
 | [`sweep config`](#7-sweep-config) | Read and write configuration in `~/.sweep/config.json` | Phase 7 |
 | [`sweep cache`](#8-sweep-cache) | View status or clear SQLite scan cache | Phase 8 |
-| [`sweep --version`](#9-sweep---version---v) | Display current CLI version | Phase 1 |
-| [`sweep --help`](#10-sweep---help---h) | Display CLI help menu | Phase 1 |
+| [`sweep update`](#9-sweep-update) | Check for updates and self-update Sweep CLI from GitHub Releases | Phase 10 |
+| [`sweep --version`](#10-sweep---version---v) | Display current CLI version | Phase 1 |
+| [`sweep --help`](#11-sweep---help---h) | Display CLI help menu | Phase 1 |
 
 ---
 
@@ -162,7 +163,20 @@ sweep cache clear             # Clear all cached directory scan entries
 
 ---
 
-### 9. `sweep --version` / `sweep -v`
+### 9. `sweep update`
+Checks GitHub Releases API for newer versions of Sweep CLI and provides self-updating instructions.
+
+```bash
+sweep update                  # Check for updates and update CLI
+sweep update --check          # Check for updates without downloading
+```
+
+- **Flags**:
+  - `--check`: Check for updates without downloading.
+
+---
+
+### 10. `sweep --version` / `sweep -v`
 Prints the current version of the Sweep CLI.
 
 ```bash
@@ -172,7 +186,7 @@ sweep -v
 
 ---
 
-### 10. `sweep --help` / `sweep -h`
+### 11. `sweep --help` / `sweep -h`
 Prints the CLI help summary listing commands and options.
 
 ```bash

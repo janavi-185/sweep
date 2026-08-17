@@ -8,6 +8,7 @@ import { registerDevCommand } from './commands/dev';
 import { registerHistoryCommand } from './commands/history';
 import { registerConfigCommand } from './commands/config';
 import { registerCacheCommand } from './commands/cache';
+import { registerUpdateCommand } from './commands/update';
 
 export function createProgram(): Command {
   const program = new Command();
@@ -25,6 +26,7 @@ export function createProgram(): Command {
   registerHistoryCommand(program);
   registerConfigCommand(program);
   registerCacheCommand(program);
+  registerUpdateCommand(program);
 
   return program;
 }

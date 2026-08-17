@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { runMigrations } from './migrations/index.js';
 import type {
   DatabaseSyncInterface,
   ScanRow,
@@ -12,7 +11,8 @@ import type {
   NewScan,
   NewScanEntry,
   NewCleanupEvent,
-} from './types.js';
+} from '@sweep/types';
+import { runMigrations } from './migrations/index.js';
 
 function loadDatabaseSync(): new (
   location: string,

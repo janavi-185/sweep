@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { DatabaseService, ScanRow, CleanupEventRow } from '@sweep/database';
+import { DatabaseService } from '@sweep/database';
+import { ScanRow, CleanupEventRow } from '@sweep/types';
 import { formatBytes } from '@sweep/core';
 import { print } from '../utils/output';
 import { createAsyncHandler } from '../utils/async-handler';

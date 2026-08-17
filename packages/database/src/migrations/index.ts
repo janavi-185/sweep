@@ -1,4 +1,4 @@
-import type { DatabaseSyncInterface } from '../types.js';
+import type { DatabaseSyncInterface } from '@sweep/types';
 
 export const INITIAL_SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS scans (
