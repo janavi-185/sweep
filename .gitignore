@@ -39,3 +39,6 @@ Thumbs.db
 # Coverage
 coverage/
 .nyc_output/
+
+# Documentation phases
+docs/phases/

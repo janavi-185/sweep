@@ -49,6 +49,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          name: "Sweep ${{ github.ref_name }} — macOS Storage Analyzer & Cleanup CLI"
           files: |
             dist/sweep-darwin-arm64
             dist/sweep-darwin-arm64.sha256
