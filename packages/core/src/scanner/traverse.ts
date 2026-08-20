@@ -4,6 +4,21 @@ import path from 'node:path';
 import { FileEntry, DirectoryEntry, FsEntry, ScanOptions, ProgressCallback } from '../types';
 import { categoriseFile } from './categorise';
 import { getFileExtension, isHiddenPath } from './metadata';
+import { mapConcurrent } from '../concurrency';
+
+const NETWORK_TIMEOUT_MS = 5000;
+
+async function readdirWithTimeout(dirPath: string): Promise<Dirent[]> {
+  return Promise.race([
+    fs.readdir(dirPath, { withFileTypes: true }),
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(Object.assign(new Error('Directory read timeout'), { code: 'ETIMEDOUT' })),
+        NETWORK_TIMEOUT_MS,
+      ),
+    ),
+  ]);
+}
 
 export interface TraversalResult {
   entries: FsEntry[];
@@ -47,7 +62,7 @@ export async function traverseDirectory(
 
     let dirEntries: Dirent[];
     try {
-      dirEntries = await fs.readdir(currentPath, { withFileTypes: true });
+      dirEntries = await readdirWithTimeout(currentPath);
     } catch {
       skippedCount++;
       return 0;
@@ -55,12 +70,12 @@ export async function traverseDirectory(
 
     let dirTotalSize = 0;
 
-    for (const dirEnt of dirEntries) {
+    const sizes = await mapConcurrent(dirEntries, 64, async (dirEnt) => {
       const fullPath = path.join(currentPath, dirEnt.name);
       const isHidden = isHiddenPath(fullPath);
 
       if (options.includeHidden === false && isHidden) {
-        continue;
+        return 0;
       }
 
       try {
@@ -78,7 +93,7 @@ export async function traverseDirectory(
               isDirectory: true,
             };
             directories.push(symlinkDirEntry);
-            dirTotalSize += lstat.size;
+            return lstat.size;
           } else {
             const ext = getFileExtension(dirEnt.name);
             const category = categoriseFile(fullPath, ext);
@@ -95,7 +110,7 @@ export async function traverseDirectory(
             };
             files.push(symlinkFileEntry);
             scannedFileCount++;
-            dirTotalSize += lstat.size;
+            return lstat.size;
           }
         } else if (lstat.isDirectory()) {
           const subDirSize = await walk(fullPath, currentDepth + 1);
@@ -109,7 +124,7 @@ export async function traverseDirectory(
             isDirectory: true,
           };
           directories.push(dirEntry);
-          dirTotalSize += subDirSize;
+          return subDirSize;
         } else if (lstat.isFile()) {
           const ext = getFileExtension(dirEnt.name);
           const category = categoriseFile(fullPath, ext);
@@ -126,13 +141,17 @@ export async function traverseDirectory(
           };
           files.push(fileEntry);
           scannedFileCount++;
-          dirTotalSize += lstat.size;
-
           reportProgress(fullPath);
+          return lstat.size;
         }
       } catch {
         skippedCount++;
       }
+      return 0;
+    });
+
+    for (const size of sizes) {
+      dirTotalSize += size;
     }
 
     return dirTotalSize;

@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
 import path from 'path';
-import { scanDirectory, formatBytes, analyzeResult } from '@sweep/core';
+import { scanDirectory, formatBytes, analyzeResult, getOptimalConcurrency } from '@sweep/core';
 import { DatabaseService } from '@sweep/database';
 import { print, renderBarChart } from '../utils/output';
 import { createAsyncHandler } from '../utils/async-handler';
@@ -14,12 +14,13 @@ export function registerScanCommand(program: Command): void {
     .option('--depth <n>', 'Maximum directory depth')
     .option('--no-cache', 'Force fresh scan, bypassing cached directory results')
     .option('--json', 'Output raw JSON report')
+    .option('--benchmark', 'Display execution benchmark timing and throughput metrics')
     .description('Scan a directory and report storage usage')
     .action(
       createAsyncHandler(
         async (
           targetPath: string,
-          options: { depth?: string; cache?: boolean; json?: boolean },
+          options: { depth?: string; cache?: boolean; json?: boolean; benchmark?: boolean },
         ) => {
           const parsedDepth = options.depth ? parseInt(options.depth, 10) : undefined;
           if (options.depth && (isNaN(parsedDepth!) || parsedDepth! < 0)) {
@@ -147,6 +148,30 @@ export function registerScanCommand(program: Command): void {
                 `    ${chalk.white(c.path.padEnd(35))} ${chalk.bold.yellow(sizePad)}   ${chalk.gray(c.reason)}`,
               );
             }
+          }
+
+          if (options.benchmark) {
+            const durationSec = Math.max(scannedResult.durationMs / 1000, 0.001);
+            const filesPerSec = Math.round(scannedResult.fileCount / durationSec);
+            const bytesPerSec = scannedResult.totalSizeBytes / durationSec / (1024 * 1024);
+            const concurrency = getOptimalConcurrency(8);
+
+            console.log(chalk.bold.magenta('\n  Benchmark Performance Metrics'));
+            print.divider();
+            console.log(`  ${chalk.gray('Total time:')}       ${durationSec.toFixed(3)}s`);
+            console.log(
+              `  ${chalk.gray('Files scanned:')}    ${scannedResult.fileCount.toLocaleString()}`,
+            );
+            console.log(
+              `  ${chalk.gray('Throughput:')}       ${filesPerSec.toLocaleString()} files/sec`,
+            );
+            console.log(
+              `  ${chalk.gray('Data volume:')}      ${formatBytes(scannedResult.totalSizeBytes)}`,
+            );
+            console.log(`  ${chalk.gray('Read rate:')}        ${bytesPerSec.toFixed(2)} MB/s`);
+            console.log(
+              `  ${chalk.gray('Worker concurrency:')} ${concurrency} parallel streams active`,
+            );
           }
 
           print.divider();

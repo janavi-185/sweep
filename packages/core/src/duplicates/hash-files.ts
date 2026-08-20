@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import { FileEntry } from '@sweep/types';
+import { mapConcurrent, getOptimalConcurrency } from '../concurrency';
 
 export function computeSha256(rawPath: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -15,7 +16,6 @@ export function computeSha256(rawPath: string): Promise<string> {
   });
 }
 
-// TODO(phase-9): parallelise file hashing using worker_threads or bounded concurrency
 export async function hashFiles(
   sizeGroups: Map<number, FileEntry[]>,
   onProgress?: (hashed: number, total: number, currentPath: string) => void,
@@ -28,8 +28,9 @@ export async function hashFiles(
   const total = allCandidates.length;
   const hashGroupMap = new Map<string, FileEntry[]>();
   let hashedCount = 0;
+  const concurrency = getOptimalConcurrency(8);
 
-  for (const file of allCandidates) {
+  await mapConcurrent(allCandidates, concurrency, async (file) => {
     try {
       const digest = await computeSha256(file.path);
       hashedCount += 1;
@@ -50,7 +51,7 @@ export async function hashFiles(
         onProgress(hashedCount, total, file.path);
       }
     }
-  }
+  });
 
   // Filter to groups with at least 2 matching hashes
   const result = new Map<string, FileEntry[]>();

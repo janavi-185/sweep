@@ -6,6 +6,7 @@ export * from './developer';
 export * from './cleaner';
 export * from './duplicates';
 export * from './cache';
+export * from './concurrency';
 
 /**
  * Core engine stub for Sweep
