@@ -53,9 +53,14 @@ export async function traverseDirectory(
     }
   }
 
-  async function walk(currentPath: string, currentDepth: number): Promise<number> {
+  interface SubtreeResult {
+    sizeBytes: number;
+    fileCount: number;
+  }
+
+  async function walk(currentPath: string, currentDepth: number): Promise<SubtreeResult> {
     if (maxDepth !== undefined && currentDepth > maxDepth) {
-      return 0;
+      return { sizeBytes: 0, fileCount: 0 };
     }
 
     reportProgress(currentPath);
@@ -65,17 +70,15 @@ export async function traverseDirectory(
       dirEntries = await readdirWithTimeout(currentPath);
     } catch {
       skippedCount++;
-      return 0;
+      return { sizeBytes: 0, fileCount: 0 };
     }
 
-    let dirTotalSize = 0;
-
-    const sizes = await mapConcurrent(dirEntries, 64, async (dirEnt) => {
+    const results = await mapConcurrent(dirEntries, 64, async (dirEnt): Promise<SubtreeResult> => {
       const fullPath = path.join(currentPath, dirEnt.name);
       const isHidden = isHiddenPath(fullPath);
 
       if (options.includeHidden === false && isHidden) {
-        return 0;
+        return { sizeBytes: 0, fileCount: 0 };
       }
 
       try {
@@ -93,7 +96,7 @@ export async function traverseDirectory(
               isDirectory: true,
             };
             directories.push(symlinkDirEntry);
-            return lstat.size;
+            return { sizeBytes: lstat.size, fileCount: 0 };
           } else {
             const ext = getFileExtension(dirEnt.name);
             const category = categoriseFile(fullPath, ext);
@@ -110,21 +113,21 @@ export async function traverseDirectory(
             };
             files.push(symlinkFileEntry);
             scannedFileCount++;
-            return lstat.size;
+            return { sizeBytes: lstat.size, fileCount: 1 };
           }
         } else if (lstat.isDirectory()) {
-          const subDirSize = await walk(fullPath, currentDepth + 1);
+          const subDirResult = await walk(fullPath, currentDepth + 1);
           const dirEntry: DirectoryEntry = {
             path: fullPath,
             name: dirEnt.name,
-            sizeBytes: subDirSize,
-            fileCount: scannedFileCount,
+            sizeBytes: subDirResult.sizeBytes,
+            fileCount: subDirResult.fileCount,
             isHidden,
             isSymlink: false,
             isDirectory: true,
           };
           directories.push(dirEntry);
-          return subDirSize;
+          return subDirResult;
         } else if (lstat.isFile()) {
           const ext = getFileExtension(dirEnt.name);
           const category = categoriseFile(fullPath, ext);
@@ -142,19 +145,22 @@ export async function traverseDirectory(
           files.push(fileEntry);
           scannedFileCount++;
           reportProgress(fullPath);
-          return lstat.size;
+          return { sizeBytes: lstat.size, fileCount: 1 };
         }
       } catch {
         skippedCount++;
       }
-      return 0;
+      return { sizeBytes: 0, fileCount: 0 };
     });
 
-    for (const size of sizes) {
-      dirTotalSize += size;
+    let dirTotalSize = 0;
+    let dirFileCount = 0;
+    for (const res of results) {
+      dirTotalSize += res.sizeBytes;
+      dirFileCount += res.fileCount;
     }
 
-    return dirTotalSize;
+    return { sizeBytes: dirTotalSize, fileCount: dirFileCount };
   }
 
   const rootLstat = await fs.lstat(resolvedRoot);
@@ -162,7 +168,8 @@ export async function traverseDirectory(
     throw new Error(`Expected a directory path, got a file: ${resolvedRoot}`);
   }
 
-  const totalSizeBytes = await walk(resolvedRoot, 0);
+  const rootResult = await walk(resolvedRoot, 0);
+  const totalSizeBytes = rootResult.sizeBytes;
 
   if (onProgress) {
     onProgress(scannedFileCount, resolvedRoot);

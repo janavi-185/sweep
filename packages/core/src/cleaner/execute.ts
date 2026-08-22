@@ -11,7 +11,7 @@ export async function deleteItem(
 
   // 1. Safety Re-check: Path must match governing rule patterns
   const matchesSafety = candidate.rule.paths.some((pattern) =>
-    matchesPattern(candidate.path, pattern),
+    matchesPattern(resolvedPath, pattern),
   );
 
   if (!matchesSafety) {
@@ -29,7 +29,7 @@ export async function deleteItem(
   } catch {
     return {
       candidate,
-      actionTaken: 'cleaned',
+      actionTaken: 'skipped',
       freedBytes: 0,
       error: 'Item no longer exists on disk',
     };

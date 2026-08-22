@@ -9,7 +9,12 @@ export const trashRule: CandidateRule = (entries: FsEntry[]): AnalyzerCleanupCan
   const candidates: AnalyzerCleanupCandidate[] = [];
   for (const entry of entries) {
     const norm = entry.path.toLowerCase();
-    if (norm.includes('/.trash') || norm.includes('/trash')) {
+    const isTrashPath =
+      norm.includes('/.trash/') ||
+      norm.endsWith('/.trash') ||
+      norm.includes('/.trashes/') ||
+      norm.endsWith('/.trashes');
+    if (isTrashPath) {
       candidates.push({
         path: entry.path,
         sizeBytes: entry.sizeBytes,
